@@ -40,7 +40,8 @@ provider "aws" {
 }
 
 module "primary_consul_cluster" {
-  source = "path to module"
+  source  = "hashicorp/consul-ent-k8s/aws"
+  version = "0.1.0"
 
   aws_secrets_manager_name = "<name of the AWS secrets manager you will use for Consul federation secrets>"
   consul_license           = file("<path to Consul Enterprise license")
@@ -58,7 +59,8 @@ provider "aws" {
 }
 
 module "secondary_consul_cluster" {
-  source = "path to module"
+  source  = "hashicorp/consul-ent-k8s/aws"
+  version = "0.1.0"
 
   aws_secrets_manager_name = "<name of the AWS secrets manager you will use for Consul federation secrets>"
   consul_license           = file("<path to Consul Enterprise license")
