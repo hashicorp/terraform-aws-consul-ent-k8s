@@ -10,6 +10,7 @@ on:
   pull_request:
     paths-ignore:
       - '**/README.md'
+      - '**/CHANGELOG.md'
   repository_dispatch:
     types: [ok-to-test-command]
 
