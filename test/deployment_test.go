@@ -96,7 +96,11 @@ func TestClusterDeployment(t *testing.T) {
 	}
 	createTfcWorkspace(t, tfcOrg, tfcToken, prereqsWorkspaceName)
 	os.Setenv("TF_WORKSPACE", prereqsWorkspaceName)
-	terraform.InitAndApplyAndIdempotent(t, prereqsTerraformOptions)
+	terraform.Init(t, prereqsTerraformOptions)
+	if os.Getenv("GITHUB_ACTIONS") == "" {
+		writeWorkspaceNameToTfDir(prereqsModulePath, prereqsWorkspaceName)
+	}
+	terraform.ApplyAndIdempotent(t, prereqsTerraformOptions)
 	// Gather prereqs outputs
 	primaryClusterName := terraform.Output(t, prereqsTerraformOptions, "primary_cluster_name")
 	secondaryClusterName := terraform.Output(t, prereqsTerraformOptions, "secondary_cluster_name")
@@ -115,7 +119,11 @@ func TestClusterDeployment(t *testing.T) {
 	}
 	createTfcWorkspace(t, tfcOrg, tfcToken, primaryWorkspaceName)
 	os.Setenv("TF_WORKSPACE", primaryWorkspaceName)
-	terraform.InitAndApplyAndIdempotent(t, primaryTerraformOptions)
+	terraform.Init(t, primaryTerraformOptions)
+	if os.Getenv("GITHUB_ACTIONS") == "" {
+		writeWorkspaceNameToTfDir(primaryModulePath, primaryWorkspaceName)
+	}
+	terraform.ApplyAndIdempotent(t, primaryTerraformOptions)
 
 	// Run secondary module, and setup its destruction during CI
 	// (no-CI destruction is conditionally configured after tests below)
@@ -130,7 +138,11 @@ func TestClusterDeployment(t *testing.T) {
 	}
 	createTfcWorkspace(t, tfcOrg, tfcToken, secondaryWorkspaceName)
 	os.Setenv("TF_WORKSPACE", secondaryWorkspaceName)
-	terraform.InitAndApplyAndIdempotent(t, secondaryTerraformOptions)
+	terraform.Init(t, secondaryTerraformOptions)
+	if os.Getenv("GITHUB_ACTIONS") == "" {
+		writeWorkspaceNameToTfDir(secondaryModulePath, secondaryWorkspaceName)
+	}
+	terraform.ApplyAndIdempotent(t, secondaryTerraformOptions)
 
 	// Run app primary module, and setup its destruction during CI
 	// (no-CI destruction is conditionally configured after tests below)
@@ -145,7 +157,11 @@ func TestClusterDeployment(t *testing.T) {
 	}
 	createTfcWorkspace(t, tfcOrg, tfcToken, appPrimaryWorkspaceName)
 	os.Setenv("TF_WORKSPACE", appPrimaryWorkspaceName)
-	terraform.InitAndApplyAndIdempotent(t, appPrimaryTerraformOptions)
+	terraform.Init(t, appPrimaryTerraformOptions)
+	if os.Getenv("GITHUB_ACTIONS") == "" {
+		writeWorkspaceNameToTfDir(appPrimaryModulePath, appPrimaryWorkspaceName)
+	}
+	terraform.ApplyAndIdempotent(t, appPrimaryTerraformOptions)
 
 	// Run app secondary module, and setup its destruction during CI
 	// (no-CI destruction is conditionally configured after tests below)
@@ -160,7 +176,11 @@ func TestClusterDeployment(t *testing.T) {
 	}
 	createTfcWorkspace(t, tfcOrg, tfcToken, appSecondaryWorkspaceName)
 	os.Setenv("TF_WORKSPACE", appSecondaryWorkspaceName)
-	terraform.InitAndApplyAndIdempotent(t, appSecondaryTerraformOptions)
+	terraform.Init(t, appSecondaryTerraformOptions)
+	if os.Getenv("GITHUB_ACTIONS") == "" {
+		writeWorkspaceNameToTfDir(appSecondaryModulePath, appSecondaryWorkspaceName)
+	}
+	terraform.ApplyAndIdempotent(t, appSecondaryTerraformOptions)
 
 	// Run validation module, and setup its destruction during CI
 	// (no-CI destruction is conditionally configured after tests below)
@@ -175,7 +195,11 @@ func TestClusterDeployment(t *testing.T) {
 	}
 	createTfcWorkspace(t, tfcOrg, tfcToken, validationWorkspaceName)
 	os.Setenv("TF_WORKSPACE", validationWorkspaceName)
-	terraform.InitAndApply(t, validationTerraformOptions)
+	terraform.Init(t, validationTerraformOptions)
+	if os.Getenv("GITHUB_ACTIONS") == "" {
+		writeWorkspaceNameToTfDir(validationModulePath, validationWorkspaceName)
+	}
+	terraform.Apply(t, validationTerraformOptions)
 	// Gather validation outputs
 	consulWanMembers := terraform.Output(t, validationTerraformOptions, "consul_wan_members")
 	nodeGroupRootBlockDeviceVolumeType := terraform.Output(t, validationTerraformOptions, "node_group_root_block_device_volume_type")

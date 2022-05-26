@@ -205,3 +205,10 @@ func removeAutoTfvars(t *testing.T, path string) {
 		}
 	}
 }
+
+// Persist Terraform Workspace name so users can run diagnostic
+// Terraform commands without setting the TF_WORKSPACE env var or
+// running "terraform workspace select" first
+func writeWorkspaceNameToTfDir(modulePath string, workspaceName string) {
+	ioutil.WriteFile(filepath.Join(modulePath, ".terraform", "environment"), []byte(workspaceName), 0644)
+}

@@ -22,17 +22,6 @@ runs:
         mv $TFENV_DL_TMP/tfenv-2989f1a5560e313f70f7711be592ddb68418862b ~/.tfenv
         echo "$HOME/.tfenv/bin" >> $GITHUB_PATH
       shell: bash
-    # terraform-credentials-env can be dropped when moving to TF v1.2+
-    - run: echo "Installing terraform-credentials-env"
-      shell: bash
-    - name: Install terraform-credentials-env
-      run: |
-        mkdir -p ~/.terraform.d/plugins
-        TFCREDENV_DL_TMP=$(mktemp -d)
-        curl -Lo $TFCREDENV_DL_TMP/terraform-credentials-env_1.0.0_linux_amd64.zip https://github.com/apparentlymart/terraform-credentials-env/releases/download/v1.0.0/terraform-credentials-env_1.0.0_linux_amd64.zip
-        unzip $TFCREDENV_DL_TMP/terraform-credentials-env_1.0.0_linux_amd64.zip -d ~/.terraform.d/plugins
-        echo 'credentials_helper "env" {}' >> ~/.terraformrc
-      shell: bash
     - run: echo "Deploying and running tests"
       shell: bash
     - name: Deploy and run tests
