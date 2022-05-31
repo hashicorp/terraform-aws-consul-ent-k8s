@@ -17,6 +17,11 @@ terraform {
   }
 
   required_providers {
+    testingtoolsaws = {
+      source  = "app.terraform.io/hc-tfc-dev/testingtoolsaws"
+      version = "~> 0.2.0"
+    }
+
     # https://github.com/hashicorp/terraform-provider-http/issues/49
     http = {
       source  = "terraform-aws-modules/http"
@@ -64,4 +69,14 @@ data "http" "wait_for_secondary_cluster" {
   ca_certificate = module.quickstart.eks_2_cluster_ca_cert
   url            = format("%s/healthz", module.quickstart.eks_2_kube_api_endpoint)
   timeout        = 15 * 60
+}
+
+# This resource is just a helper used during "terraform destroy" to ensure that lingering ENIs & security groups don't cause automated tests to fail
+# Works around the issue described at https://github.com/hashicorp/terraform-provider-aws/issues/20925
+provider "testingtoolsaws" {
+  region = var.region
+}
+resource "testingtoolsaws_stale_eni_with_sg_cleanup" "eks" {
+  security_group_description = "^EKS created security group applied to ENI that is attached to EKS Control Plane master nodes, as well as any managed workloads\\.$"
+  vpc_id                     = module.quickstart.vpc_id
 }

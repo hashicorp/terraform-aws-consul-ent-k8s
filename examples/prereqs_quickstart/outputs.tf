@@ -40,3 +40,7 @@ output "eks_2_kube_api_endpoint" {
 output "secrets_manager_name" {
   value = module.secrets_manager.secrets_manager_name
 }
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
